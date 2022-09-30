@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+   <h1> @gaoding/file-ms 使用指南</h1>
+    <p>文件上传规范
+    https://doc.huanleguang.com/pages/viewpage.action?pageId=241231286</p>
+
+<h2>安装方式</h2>
+// 安装包依赖
+yarn add @gaoding/file-ms
+@gaoding/file-ms SDK 做了重构，底层依赖 @aws-sdk 对应切换到了最新版本 aws-sdk-js-v3，如果要是使用 v1.x 版本请跳转到 FileMS v1.x
+
+<h2>v1.x 迁移到 v2.x 请查看 v1.x 迁移文档
+</h2>
+使用方式
+首先文件上传需要先通过业务接口的鉴权才能走到 FileMS 服务上传文件，所以接入 SDK 前需要 @甜瓜 对 /api/filems 接口做下转发配置。
+
+文件上传
+</body>
+</html>
