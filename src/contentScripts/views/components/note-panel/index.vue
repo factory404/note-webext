@@ -1,5 +1,5 @@
 <template>
-    <div class="nse-note-panel">
+    <div class="nse-note-panel" ref="refNotePanel">
         <div class="nse-note-panel-header">
             <MenuFoldOutlined />
         </div>
@@ -19,6 +19,11 @@
 import { onMounted } from 'vue';
 import { MenuFoldOutlined } from '@ant-design/icons-vue';
 import Record from './record.vue';
+import useStopDomEvent from '~/hook/useStopDomEvent';
+
+const refNotePanel = ref(null);
+
+useStopDomEvent(refNotePanel, 'mouseup');
 
 onMounted(() => {
     document.body.setAttribute('style', 'margin-right:360px');

@@ -1,11 +1,11 @@
 <template>
-    <div class="nse-note-panel-record">
+    <div class="nse-note-panel-record" :class="isEditor ? 'nse-note-panel-record-editor' : ''">
         <div class="nse-note-panel-record-tools">
             <FormOutlined v-if="!isEditor" @click="editorClick"/>
             <FileDoneOutlined v-if="isEditor" @click="editorClick"/>
         </div>
         <div v-if="isEditor">
-            <TextArea class="nse-note-panel-record-input" :autosize="{ minRows: 12, maxRows: 12 }" type="textarea" :value="source"></TextArea>
+            <TextArea class="nse-note-panel-record-input" :autosize="{ minRows: 12, maxRows: 12 }" type="textarea" v-model:value="source"></TextArea>
         </div>
         <Markdown v-if="!isEditor" class="markdown-body" langPrefix="ddddkk" :source="source"></Markdown>
     </div>
@@ -49,6 +49,9 @@ const editorClick = () => {
     border-radius: 4px;
     background: #ffffff;
     border: 1px solid #ffffff;
+    &-editor {
+        // background: #f3f3f3;
+    }
     &:hover {
         border: 1px solid rgb(91, 194, 170);
         cursor: pointer;
@@ -64,7 +67,14 @@ const editorClick = () => {
         padding: 10px;
     }
     &-input {
+        width: 100%;
+        padding: 4px;
         resize: none;
+        border-color: transparent;
+        outline: 0;
+        -webkit-box-shadow: 0 0 0 0 transparent;
+        box-shadow: 0 0 0 2 transparent;
+        background: #f3f3f3;
     }
 }
 </style>
