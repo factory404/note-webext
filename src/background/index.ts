@@ -9,6 +9,10 @@ browser.runtime.onInstalled.addListener((): void => {
 
 let previousTabId = 0
 
+if (__DEV__) {
+    import('./contentScriptHMR');
+}
+
 // communication example: send previous tab title from background page
 // see shim.d.ts for type declaration
 browser.tabs.onActivated.addListener(async({ tabId }) => {
