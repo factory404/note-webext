@@ -8,7 +8,7 @@
               :cancleSelect="cancleSelect"
               @select="onSelect"
           ></SelectButton>
-          <NotePanel></NotePanel>
+          <NotePanel ref="refNotePanel"></NotePanel>
       </div>
   </ConfigProvider>
 </template>
@@ -20,9 +20,12 @@ import NotePanel from './components/note-panel/index.vue';
 import SelectButton from './components/select-button.vue';
 import useMouseUp from '~/hook/useMouseUp';
 
+const refNotePanel = ref()
 const isSelect = ref(false);
 const { cancleSelect, isMouseUp, selectPosition, selectText, selectTextContext, selectMarkDown } = useMouseUp();
 console.log(selectTextContext);
+console.log('==refNotePanel==',refNotePanel);
+
 
 watch(selectText, (val, oldVal) => {
   console.log('===selectMarkDown=====');
@@ -35,6 +38,8 @@ watch(selectText, (val, oldVal) => {
 
 const onSelect = () => {
   isSelect.value = true;
+  refNotePanel.value.updateNote({markdown: selectMarkDown.value})
+
 };
 </script>
 

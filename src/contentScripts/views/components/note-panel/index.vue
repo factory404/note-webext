@@ -6,12 +6,19 @@
                 <MenuFoldOutlined />
             </div>
             <div class="nse-note-panel-content">
-                <div class="nse-note-panel-content-title">2022-09-14</div>
-                <div class="nse-note-panel-content-list">
-                    <Record></Record>
-                    <Record></Record>
-                    <Record></Record>
-                    <Record></Record>
+                <div class="nse-note-panel-content-title">{{noteData.title}}</div>
+                <div class="nse-note-panel-content-tools-nav">
+                    <Tabs class="nse-note-panel-content-tabs" size="small" v-model:activeKey="activeTab" @change="onTabsChange">
+                        <TabPane :key=TAB_KEY_PREVIEW tab="预览"/>
+                        <TabPane :key=TAB_KEY_EDITOR tab="编辑"/>
+                    </Tabs>
+                    <div class="nse-note-panel-content-tools">
+                        <PictureOutlined />
+                    </div>
+                </div>
+                <div class="nse-note-panel-content-editor">
+                    <Markdown v-show="activeTab===TAB_KEY_PREVIEW" class="markdown-body" langPrefix="xxxk" :source="noteData.markdown"></Markdown>
+                    <TextArea v-show="activeTab===TAB_KEY_EDITOR" class="nse-note-panel-content-editor-input" :autoSize="{ minRows: 34, maxRows: 34 }" type="textarea" v-model:value="noteData.markdown"></TextArea>
                 </div>
             </div>
         </div>
@@ -20,17 +27,45 @@
 
 <script setup lang="ts">
 import { sendMessage } from 'webext-bridge';
-import { MenuFoldOutlined } from '@ant-design/icons-vue';
+import {Tabs, Input} from 'ant-design-vue'
+import { MenuFoldOutlined, PictureOutlined} from '@ant-design/icons-vue';
+import Markdown from 'vue3-markdown-it';
 import {GET_PANEL_WIDTH, SET_PANEL_WIDTH} from '~/constant'
-import Record from './record.vue';
 import useStopDomEvent from '~/hook/useStopDomEvent';
 import DragButton from './drag-button.vue'
+
+const TabPane = Tabs.TabPane
+const TextArea = Input.TextArea
+
 
 const refNotePanel = ref(null);
 const panelWidth = ref(360);
 
 const MAX_PANEL_WIDTH = 500;
 const MIN_PANEL_WIDTH = 300;
+
+const TAB_KEY_PREVIEW = '1'
+const TAB_KEY_EDITOR = '2'
+
+const activeTab = ref('1')
+
+const noteData = ref({
+    objectId: 'xxxx',
+    title: "笔记 2022-09-14",
+    markdown: `## Lists
+Sometimes you want bullet points:
+
+* Start a line with a star
+* Profit!
+
+## Tables
+First Header | Second Header
+------------ | -------------
+Content from cell 1 | Content from cell 2
+Content in the first column | Content in the second column`
+})
+
+const editorData = ref('')
 
 useStopDomEvent(refNotePanel, 'mouseup');
 
@@ -63,6 +98,31 @@ const onDragRight = (pixel: number) => {
 const onBtnclick = () => {
     changeBodyWidth(0)
 }
+
+const updateNote = (data: {markdown: string}) => {
+    noteData.value.markdown = `${noteData.value.markdown}
+
+${data.markdown}`
+}
+
+const onTabsChange = (tab: any) => {
+    // console.log(tab === TAB_KEY_PREVIEW);
+    
+    // if (tab === TAB_KEY_PREVIEW) {
+    //    setTimeout(() => {
+    //     noteData.value.markdown = editorData.value
+    //     console.log('==editorData.value==', editorData.value);
+    //    }, 1000);
+        
+    // }
+    // if (tab === TAB_KEY_EDITOR) {
+    //     editorData.value = noteData.value.markdown
+    // }
+}
+
+defineExpose({
+    updateNote
+})
 </script>
 
 <style lang="less">
@@ -107,10 +167,40 @@ const onBtnclick = () => {
             font-weight: 600;
             border-bottom: 1px solid #e2e2e2;
         }
-        &-list {
-            height: calc(100vh - @header-height*2 - 10px);
-            padding: 10px;
+        &-tools-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            background: #ffffff;
+            border-bottom: 1px solid rgb(236, 236, 236);
+        }
+        &-tabs {
+            .note-sync-antdv-tabs-nav{
+                margin: 0;
+            }
+        }
+        &-tools{
+            font-size: 16px;
+        }
+        &-editor {
+            height: calc(100vh - @header-height*2 - 45px);
             overflow: auto;
+            background: #ffffff;
+            .markdown-body {
+                padding: 10px;
+            }
+            &-input {
+                height: calc(100vh - 100px);
+                width: 100%;
+                padding: 10px 0 10px 10px;
+                resize: none;
+                border-color: transparent;
+                outline: 0;
+                -webkit-box-shadow: 0 0 0 0 transparent;
+                box-shadow: 0 0 0 2 transparent;
+                background: #f3f3f3;
+            }
         }
     }
 }
