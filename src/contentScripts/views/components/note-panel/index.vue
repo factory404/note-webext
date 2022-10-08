@@ -3,12 +3,24 @@
         <DragButton class="nse-note-panel-drag-button" @dragLeft="onDragLeft" @dragRight="onDragRight" @btnclick="onBtnclick"></DragButton>
         <div ref="refNotePanel">
             <div class="nse-note-panel-header">
-                <MenuFoldOutlined />
+                <div>
+                    <MenuFoldOutlined />
+                </div>
+                <div>
+                    <Tooltip>
+                        <template #title>
+                            新建笔记
+                        </template>
+                        <PlusOutlined/>
+                    </Tooltip>
+                </div>
             </div>
             <div class="nse-note-panel-content">
-                <div class="nse-note-panel-content-title">{{noteData.title}}</div>
+                <div class="nse-note-panel-content-title">
+                    <Input v-model:value="noteData.title"></Input>
+                </div>
                 <div class="nse-note-panel-content-tools-nav">
-                    <Tabs class="nse-note-panel-content-tabs" size="small" v-model:activeKey="activeTab" @change="onTabsChange">
+                    <Tabs class="nse-note-panel-content-tabs" size="small" v-model:activeKey="activeTab">
                         <TabPane :key=TAB_KEY_PREVIEW tab="预览"/>
                         <TabPane :key=TAB_KEY_EDITOR tab="编辑"/>
                     </Tabs>
@@ -28,8 +40,9 @@
 <script setup lang="ts">
 import { sendMessage } from 'webext-bridge';
 import {Tabs, Input} from 'ant-design-vue'
-import { MenuFoldOutlined, PictureOutlined} from '@ant-design/icons-vue';
+import { MenuFoldOutlined, PictureOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import Markdown from 'vue3-markdown-it';
+import Tooltip from '~/components/Tooltip.vue'
 import {GET_PANEL_WIDTH, SET_PANEL_WIDTH} from '~/constant'
 import useStopDomEvent from '~/hook/useStopDomEvent';
 import DragButton from './drag-button.vue'
@@ -65,8 +78,6 @@ Content from cell 1 | Content from cell 2
 Content in the first column | Content in the second column`
 })
 
-const editorData = ref('')
-
 useStopDomEvent(refNotePanel, 'mouseup');
 
 sendMessage(GET_PANEL_WIDTH, {}).then((width:any) => {
@@ -99,26 +110,13 @@ const onBtnclick = () => {
     changeBodyWidth(0)
 }
 
+// 空行误删
 const updateNote = (data: {markdown: string}) => {
     noteData.value.markdown = `${noteData.value.markdown}
 
 ${data.markdown}`
 }
 
-const onTabsChange = (tab: any) => {
-    // console.log(tab === TAB_KEY_PREVIEW);
-    
-    // if (tab === TAB_KEY_PREVIEW) {
-    //    setTimeout(() => {
-    //     noteData.value.markdown = editorData.value
-    //     console.log('==editorData.value==', editorData.value);
-    //    }, 1000);
-        
-    // }
-    // if (tab === TAB_KEY_EDITOR) {
-    //     editorData.value = noteData.value.markdown
-    // }
-}
 
 defineExpose({
     updateNote
@@ -138,6 +136,17 @@ defineExpose({
     background: #f3f3f3;
     border-left: 1px solid #e7e7e7;
     box-shadow: -3px 0px 10px 1px #f2f2f2;
+
+    .note-sync-antdv-input {
+        height: 100%;
+        padding: 0;
+        font-size: 16px;
+        border-color: transparent;
+        resize: none;
+        -webkit-box-shadow: 0 0 0 0 transparent;
+        box-shadow: 0 0 0 2 transparent;
+        background: #f3f3f3;
+    }
 
     &-drag-button{
         position: absolute;
@@ -193,7 +202,7 @@ defineExpose({
             &-input {
                 height: calc(100vh - 100px);
                 width: 100%;
-                padding: 10px 0 10px 10px;
+                padding: 10px 0 10px 10px !important;
                 resize: none;
                 border-color: transparent;
                 outline: 0;
