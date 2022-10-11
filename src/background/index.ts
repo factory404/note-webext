@@ -2,6 +2,7 @@ import type { Tabs } from 'webextension-polyfill'
 import browser from 'webextension-polyfill'
 import { onMessage, sendMessage } from 'webext-bridge'
 import './storage';
+import './note-panel';
 
 browser.runtime.onInstalled.addListener((): void => {
   // eslint-disable-next-line no-console

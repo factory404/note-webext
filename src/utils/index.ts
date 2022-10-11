@@ -37,3 +37,8 @@ export const calcPosition = (e: MouseEvent) => {
         maxHeight: maxHeight + 'px',
     };
 };
+
+export const dateFormat = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+};

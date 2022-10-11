@@ -11,7 +11,7 @@
                         <template #title>
                             新建笔记
                         </template>
-                        <PlusOutlined/>
+                        <PlusOutlined @click="createNewNoteClick"/>
                     </Tooltip>
                 </div>
             </div>
@@ -38,12 +38,13 @@
 </template>
 
 <script setup lang="ts">
+import {watch} from 'vue'
 import { sendMessage } from 'webext-bridge';
 import {Tabs, Input} from 'ant-design-vue'
 import { MenuFoldOutlined, PictureOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import Markdown from 'vue3-markdown-it';
 import Tooltip from '~/components/Tooltip.vue'
-import {GET_PANEL_WIDTH, SET_PANEL_WIDTH} from '~/constant'
+import {GET_PANEL_WIDTH, SET_PANEL_WIDTH, SYNC_NOTE_DATA, CREATE_NEW_NOTE} from '~/constant'
 import useStopDomEvent from '~/hook/useStopDomEvent';
 import DragButton from './drag-button.vue'
 
@@ -62,21 +63,18 @@ const TAB_KEY_EDITOR = '2'
 
 const activeTab = ref('1')
 
-const noteData = ref({
-    objectId: 'xxxx',
-    title: "笔记 2022-09-14",
-    markdown: `## Lists
-Sometimes you want bullet points:
-
-* Start a line with a star
-* Profit!
-
-## Tables
-First Header | Second Header
------------- | -------------
-Content from cell 1 | Content from cell 2
-Content in the first column | Content in the second column`
+const noteData = ref<INotePanelData>({
+    objectId: '',
+    title: "",
+    markdown: ''
 })
+
+watch(noteData, (val) => {
+    sendMessage(SYNC_NOTE_DATA, val).then(res => {
+        console.log('2222222', res);
+        
+    })
+}, {deep: true})
 
 useStopDomEvent(refNotePanel, 'mouseup');
 
@@ -117,6 +115,13 @@ const updateNote = (data: {markdown: string}) => {
 ${data.markdown}`
 }
 
+const createNewNoteClick = () => {
+    sendMessage(CREATE_NEW_NOTE, {}).then((res: any) => {
+        if (res.objectId) {
+            noteData.value = res;
+        }
+    })
+}
 
 defineExpose({
     updateNote
