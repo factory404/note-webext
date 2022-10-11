@@ -44,7 +44,7 @@ import {Tabs, Input} from 'ant-design-vue'
 import { MenuFoldOutlined, PictureOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import Markdown from 'vue3-markdown-it';
 import Tooltip from '~/components/Tooltip.vue'
-import {GET_PANEL_WIDTH, SET_PANEL_WIDTH, SYNC_NOTE_DATA, CREATE_NEW_NOTE} from '~/constant'
+import {GET_PANEL_WIDTH, SET_PANEL_WIDTH, SYNC_NOTE_DATA, CREATE_NEW_NOTE, LATELY_NOTE_DATA} from '~/constant'
 import useStopDomEvent from '~/hook/useStopDomEvent';
 import DragButton from './drag-button.vue'
 
@@ -69,14 +69,9 @@ const noteData = ref<INotePanelData>({
     markdown: ''
 })
 
-watch(noteData, (val) => {
-    sendMessage(SYNC_NOTE_DATA, val).then(res => {
-        console.log('2222222', res);
-        
-    })
-}, {deep: true})
-
-useStopDomEvent(refNotePanel, 'mouseup');
+sendMessage(LATELY_NOTE_DATA, {}).then((data:any) => {
+    noteData.value = (data as INotePanelData)
+})
 
 sendMessage(GET_PANEL_WIDTH, {}).then((width:any) => {
     if (width || width === 0) {
@@ -85,6 +80,15 @@ sendMessage(GET_PANEL_WIDTH, {}).then((width:any) => {
         changeBodyWidth(panelWidth.value)
     }
 })
+
+watch(noteData, (val) => {
+    sendMessage(SYNC_NOTE_DATA, val).then(res => {
+        // 更新
+    })
+}, {deep: true})
+
+useStopDomEvent(refNotePanel, 'mouseup');
+
 
 const changeBodyWidth = (width: number) => {
     document.body.setAttribute('style', `width: calc(100% - ${width}px);`);

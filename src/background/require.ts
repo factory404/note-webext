@@ -5,6 +5,8 @@ class RequireCreate {
     get(url: string) {
         return fetch(`${this.baseURL}${url}`, {
             method: 'GET',
+        }).then((res) => {
+            return res.json();
         });
     }
 

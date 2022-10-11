@@ -1,7 +1,7 @@
 import type { Tabs } from 'webextension-polyfill'
 import browser from 'webextension-polyfill'
 import { onMessage, sendMessage } from 'webext-bridge'
-import './storage';
+import './storage-message';
 import './note-panel';
 
 browser.runtime.onInstalled.addListener((): void => {

@@ -16,3 +16,5 @@ export const SET_NOTE_DATA = 'SET_NOTE_DATA';
 export const CREATE_NEW_NOTE = 'CREATE_NEW_NOTE';
 
 export const SYNC_NOTE_DATA = 'SYNC_NOTE_DATA';
+
+export const LATELY_NOTE_DATA = 'LATELY_NOTE_DATA';

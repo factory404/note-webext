@@ -1,6 +1,6 @@
 import { onMessage } from 'webext-bridge';
 import requiress from './require';
-import { SYNC_NOTE_DATA, CREATE_NEW_NOTE } from '../constant';
+import { SYNC_NOTE_DATA, CREATE_NEW_NOTE, LATELY_NOTE_DATA } from '../constant';
 import { dateFormat } from '~/utils';
 
 const uniqueid = 'OVlVP3byp0Gv1Q';
@@ -19,19 +19,14 @@ onMessage(CREATE_NEW_NOTE, async () => {
     }
 });
 
-function throttle(fn: any) {
-    const THROTTLE_TIME = 1000;
-    let lastTime = 0;
-    return new Promise((reslove) => {
-        if (lastTime > new Date().getTime()) {
-            setTimeout(() => {
-                reslove(null);
-            }, THROTTLE_TIME);
-        } else {
-            reslove(null);
-        }
-    });
-}
+onMessage(LATELY_NOTE_DATA, async () => {
+    try {
+        const res = await requiress.get(`/api/v1/note/lately?uniqueid=${uniqueid}`);
+        return res;
+    } catch (error) {
+        console.log(error);
+    }
+});
 
 let timer: any = null;
 let lastTime = 0;
