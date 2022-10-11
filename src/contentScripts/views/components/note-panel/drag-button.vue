@@ -1,15 +1,20 @@
 <template>
     <div class="nse-drag-button" @mousedown="onMousedown" @mousemove="onMousemove">
-        <div class="nse-drag-button-box">
+        <div class="nse-drag-button-box" :class="props.panelWidth === 0 ? 'nse-drag-button-box-close': ''">
             <PauseOutlined/>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, defineEmits } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { PauseOutlined} from '@ant-design/icons-vue';
 
+const props = defineProps({
+    panelWidth: {
+        type: Number
+    }
+})
 const emit = defineEmits(['dragLeft', 'dragRight', 'btnclick'])
 
 const isDrag = ref(false)
@@ -71,6 +76,15 @@ onUnmounted(() => {
         justify-content: center;
         height: 40px;
         background: rgb(227, 227, 227);
+    }
+
+    &-box-close {
+        position: relative;
+        left: -15px;
+        width: 20px;
+        color: #fff;
+        background: #1890ff;
+        box-shadow: -2px 0px 9px rgb(0 0 0 / 20%);
     }
 }
 </style>

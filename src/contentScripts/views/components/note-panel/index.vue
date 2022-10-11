@@ -1,10 +1,10 @@
 <template>
     <div class="nse-note-panel" :style="{width: panelWidth + 'px'}">
-        <DragButton class="nse-note-panel-drag-button" @dragLeft="onDragLeft" @dragRight="onDragRight" @btnclick="onBtnclick"></DragButton>
+        <DragButton class="nse-note-panel-drag-button" :panelWidth="panelWidth" @dragLeft="onDragLeft" @dragRight="onDragRight" @btnclick="onBtnclick"></DragButton>
         <div ref="refNotePanel">
             <div class="nse-note-panel-header">
                 <div>
-                    <MenuFoldOutlined />
+                    <MenuUnfoldOutlined @click="() => isNoteListVisible = true"/>
                 </div>
                 <div>
                     <Tooltip>
@@ -33,6 +33,7 @@
                     <TextArea v-show="activeTab===TAB_KEY_EDITOR" class="nse-note-panel-content-editor-input" :autoSize="{ minRows: 34, maxRows: 34 }" type="textarea" v-model:value="noteData.markdown"></TextArea>
                 </div>
             </div>
+            <NoteList v-model:isNoteListVisible="isNoteListVisible"></NoteList>
         </div>
     </div>
 </template>
@@ -41,12 +42,13 @@
 import {watch} from 'vue'
 import { sendMessage } from 'webext-bridge';
 import {Tabs, Input} from 'ant-design-vue'
-import { MenuFoldOutlined, PictureOutlined, PlusOutlined} from '@ant-design/icons-vue';
+import { MenuUnfoldOutlined, PictureOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import Markdown from 'vue3-markdown-it';
 import Tooltip from '~/components/Tooltip.vue'
 import {GET_PANEL_WIDTH, SET_PANEL_WIDTH, SYNC_NOTE_DATA, CREATE_NEW_NOTE, LATELY_NOTE_DATA} from '~/constant'
 import useStopDomEvent from '~/hook/useStopDomEvent';
 import DragButton from './drag-button.vue'
+import NoteList from './note-list.vue'
 
 const TabPane = Tabs.TabPane
 const TextArea = Input.TextArea
@@ -54,6 +56,7 @@ const TextArea = Input.TextArea
 
 const refNotePanel = ref(null);
 const panelWidth = ref(360);
+const isNoteListVisible = ref<boolean>(true)
 
 const MAX_PANEL_WIDTH = 500;
 const MIN_PANEL_WIDTH = 300;
