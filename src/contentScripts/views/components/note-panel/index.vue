@@ -56,7 +56,7 @@ const TextArea = Input.TextArea
 
 const refNotePanel = ref(null);
 const panelWidth = ref(360);
-const isNoteListVisible = ref<boolean>(true)
+const isNoteListVisible = ref<boolean>(false)
 
 const MAX_PANEL_WIDTH = 500;
 const MIN_PANEL_WIDTH = 300;
@@ -69,11 +69,14 @@ const activeTab = ref('1')
 const noteData = ref<INotePanelData>({
     objectId: '',
     title: "",
-    markdown: ''
+    markdown: '',
+    createdAt: ''
 })
 
 sendMessage(LATELY_NOTE_DATA, {}).then((data:any) => {
-    noteData.value = (data as INotePanelData)
+    if (data) {
+        noteData.value = (data as INotePanelData)
+    }
 })
 
 sendMessage(GET_PANEL_WIDTH, {}).then((width:any) => {

@@ -18,3 +18,5 @@ export const CREATE_NEW_NOTE = 'CREATE_NEW_NOTE';
 export const SYNC_NOTE_DATA = 'SYNC_NOTE_DATA';
 
 export const LATELY_NOTE_DATA = 'LATELY_NOTE_DATA';
+
+export const LIST_NOTE_DATA = 'LIST_NOTE_DATA';

@@ -1,6 +1,6 @@
 import { onMessage } from 'webext-bridge';
 import requiress from './require';
-import { SYNC_NOTE_DATA, CREATE_NEW_NOTE, LATELY_NOTE_DATA } from '../constant';
+import { SYNC_NOTE_DATA, CREATE_NEW_NOTE, LATELY_NOTE_DATA, LIST_NOTE_DATA } from '../constant';
 import { dateFormat } from '~/utils';
 
 const uniqueid = 'OVlVP3byp0Gv1Q';
@@ -22,6 +22,16 @@ onMessage(CREATE_NEW_NOTE, async () => {
 onMessage(LATELY_NOTE_DATA, async () => {
     try {
         const res = await requiress.get(`/api/v1/note/lately?uniqueid=${uniqueid}`);
+        return res;
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+onMessage(LIST_NOTE_DATA, async (message: { data: any }) => {
+    const { page, size } = message.data;
+    try {
+        const res = await requiress.get(`/api/v1/note/items?uniqueid=${uniqueid}&page=${page}&size=${size}`);
         return res;
     } catch (error) {
         console.log(error);
