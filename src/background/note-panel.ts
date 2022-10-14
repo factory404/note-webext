@@ -1,10 +1,20 @@
 import { onMessage } from 'webext-bridge';
 import requiress from './require';
-import { SYNC_NOTE_DATA, CREATE_NEW_NOTE, LATELY_NOTE_DATA, LIST_NOTE_DATA } from '../constant';
+import {
+    SYNC_NOTE_DATA,
+    CREATE_NEW_NOTE,
+    LATELY_NOTE_DATA,
+    LIST_NOTE_DATA,
+    GET_ITEM_NOTE_DATA,
+    DEL_ITEM_NOTE_DATA,
+} from '../constant';
 import { dateFormat } from '~/utils';
+import { getStorage, setStorage } from './storage';
 
 const uniqueid = 'OVlVP3byp0Gv1Q';
 const userid = '3385112ed5';
+
+const LAST_NOTE_ITEM_ID_KEY = 'LAST_NOTE_ITEM_ID_KEY';
 
 onMessage(CREATE_NEW_NOTE, async () => {
     try {
@@ -21,7 +31,8 @@ onMessage(CREATE_NEW_NOTE, async () => {
 
 onMessage(LATELY_NOTE_DATA, async () => {
     try {
-        const res = await requiress.get(`/api/v1/note/lately?uniqueid=${uniqueid}`);
+        const objectId: any = await getStorage(LAST_NOTE_ITEM_ID_KEY);
+        const res = await requiress.get(`/api/v1/note/lately?uniqueid=${uniqueid}&objectId=${objectId || 'null'}`);
         return res;
     } catch (error) {
         console.log(error);
@@ -37,6 +48,28 @@ onMessage(LIST_NOTE_DATA, async (message: { data: any }) => {
         console.log(error);
     }
 });
+
+onMessage(GET_ITEM_NOTE_DATA, async (message: { data: any }) => {
+    const { objectId } = message.data;
+    try {
+        const res = await requiress.get(`/api/v1/note/item?objectId=${objectId}`);
+        await setStorage(LAST_NOTE_ITEM_ID_KEY, objectId);
+        return res;
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+onMessage(DEL_ITEM_NOTE_DATA, async (message: { data: any }) => {
+    const { objectId } = message.data;
+    try {
+        const res = await requiress.delete(`/api/v1/note/delete?objectId=${objectId}`);
+        return res;
+    } catch (error) {
+        console.log(error);
+    }
+});
+
 
 let timer: any = null;
 let lastTime = 0;

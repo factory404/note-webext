@@ -19,4 +19,8 @@ export const SYNC_NOTE_DATA = 'SYNC_NOTE_DATA';
 
 export const LATELY_NOTE_DATA = 'LATELY_NOTE_DATA';
 
+export const GET_ITEM_NOTE_DATA = 'GET_ITEM_NOTE_DATA';
+
+export const DEL_ITEM_NOTE_DATA = 'DEL_ITEM_NOTE_DATA';
+
 export const LIST_NOTE_DATA = 'LIST_NOTE_DATA';

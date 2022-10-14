@@ -5,9 +5,14 @@
                 <MenuFoldOutlined @click="onClose"></MenuFoldOutlined>
             </div>
             <div class="nse-note-list-content-list-item">
-                <div v-for="(item, index) in noteList.data" :key="index" class="nse-note-list-content-item">
-                    <div class="nse-note-list-content-item-title">{{item.title}}</div>
-                    <div class="nse-note-list-content-item-create-at">{{item.createdAt}}</div>
+                <div v-for="(item, index) in noteList.data" :key="index" class="nse-note-list-content-item" @click="itemClick(item)">
+                    <div>
+                        <div class="nse-note-list-content-item-title">{{item.title}}</div>
+                        <div class="nse-note-list-content-item-create-at">{{item.createdAt}}</div>
+                    </div>
+                    <div>
+                        <DeleteOutlined class="nse-note-list-content-item-del-icon" @click.stop="itemDelClick(item)"/>
+                    </div>
                 </div>
             </div>
             <Pagination class="nse-note-list-content-list-item-pagination" v-model:current="noteList.page" :total="noteList.total" @change="onPaginationChange"></Pagination>
@@ -17,16 +22,16 @@
 
 <script setup lang="ts">
 import { sendMessage } from 'webext-bridge';
-import { MenuFoldOutlined } from '@ant-design/icons-vue';
+import { MenuFoldOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import { Pagination } from 'ant-design-vue'
-import { LIST_NOTE_DATA } from '~/constant';
+import { LIST_NOTE_DATA, DEL_ITEM_NOTE_DATA } from '~/constant';
 
 const props = defineProps({
     isNoteListVisible: {
         type: Boolean
     }
 })
-const emit = defineEmits(['update:isNoteListVisible'])
+const emit = defineEmits(['update:isNoteListVisible', 'itemClick'])
 
 const noteList = ref<INoteList>({
     total: 0,
@@ -51,6 +56,18 @@ const onPaginationChange = (page: number) => {
 
 const onClose = () => {
     emit('update:isNoteListVisible', false)
+}
+
+const itemClick = (item: INotePanelData) => {
+    emit('itemClick', item)
+}
+
+const itemDelClick = (item: INotePanelData) => {
+    sendMessage(DEL_ITEM_NOTE_DATA, {objectId: item.objectId}).then((data:any) => {
+        if (data) {
+            getNoteList({page: 1, size: 10})
+        }
+    })
 }
 
 </script>
@@ -105,6 +122,9 @@ const onClose = () => {
         }
     }
     &-content-item{
+        display: flex;
+        align-items:flex-start;
+        justify-content: space-between;
         padding: 10px;
         border-bottom: 1px solid #efefef;
         cursor: pointer;
@@ -120,7 +140,11 @@ const onClose = () => {
         }
         &-create-at {
             font-size: 14px;
-            text-align: right;
+        }
+        &-del-icon{
+            padding: 5px;
+            font-weight: 400;
+            color: #9a9a9a;
         }
     }
 }

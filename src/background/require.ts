@@ -33,5 +33,13 @@ class RequireCreate {
             return res.json();
         });
     }
+
+    async delete(url: string) {
+        return fetch(`${this.baseURL}${url}`, {
+            method: 'DELETE',
+        }).then((res) => {
+            return res.json();
+        });
+    }
 }
 export default new RequireCreate();

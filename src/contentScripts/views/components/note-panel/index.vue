@@ -33,7 +33,7 @@
                     <TextArea v-show="activeTab===TAB_KEY_EDITOR" class="nse-note-panel-content-editor-input" :autoSize="{ minRows: 34, maxRows: 34 }" type="textarea" v-model:value="noteData.markdown"></TextArea>
                 </div>
             </div>
-            <NoteList v-model:isNoteListVisible="isNoteListVisible"></NoteList>
+            <NoteList v-model:isNoteListVisible="isNoteListVisible" @item-click="onNoteItemClick"></NoteList>
         </div>
     </div>
 </template>
@@ -45,7 +45,7 @@ import {Tabs, Input} from 'ant-design-vue'
 import { MenuUnfoldOutlined, PictureOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import Markdown from 'vue3-markdown-it';
 import Tooltip from '~/components/Tooltip.vue'
-import {GET_PANEL_WIDTH, SET_PANEL_WIDTH, SYNC_NOTE_DATA, CREATE_NEW_NOTE, LATELY_NOTE_DATA} from '~/constant'
+import {GET_PANEL_WIDTH, SET_PANEL_WIDTH, SYNC_NOTE_DATA, CREATE_NEW_NOTE, LATELY_NOTE_DATA, GET_ITEM_NOTE_DATA} from '~/constant'
 import useStopDomEvent from '~/hook/useStopDomEvent';
 import DragButton from './drag-button.vue'
 import NoteList from './note-list.vue'
@@ -116,6 +116,15 @@ const onDragRight = (pixel: number) => {
 }
 const onBtnclick = () => {
     changeBodyWidth(0)
+}
+
+const onNoteItemClick = (item: INotePanelData) => {
+    sendMessage(GET_ITEM_NOTE_DATA, {objectId: item.objectId}).then((data:any) => {
+    if (data) {
+        noteData.value = (data as INotePanelData)
+        isNoteListVisible.value = false
+    }
+})
 }
 
 // 空行误删
