@@ -27,10 +27,14 @@ export const sharedConfig: UserConfig = {
     css: {
         preprocessorOptions: {
             modifyVars: {
+                'root-entry-name': 'default',
                 'ant-prefix': 'note-sync-antdv',
                 hack: `true; @import "${resolve('./src/styles/overwrite.lessxxx')}";`,
             },
             less: {
+                modifyVars: {
+                    'root-entry-name': 'default',
+                },
                 javascriptEnabled: true,
             },
         },
