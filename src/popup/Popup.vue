@@ -1,28 +1,37 @@
 <template>
   <main class="note-sync-popup">
-    <h1 class="note-sync-popup-title">简易笔记登录</h1>
-    <div class="note-sync-popup-form">
-      <div class="note-sync-popup-form-item">
-        <input placeholder="请输入手机号" :maxlength="11" oninput = "value=value.replace(/[^\d]/g,'')" v-model="formData.phone"/>
-        <div class="note-sync-popup-form-item-validate-msg">{{validateMsg.phone}}</div>
-      </div>
-      <div class="note-sync-popup-form-item">
-        <div class="note-sync-popup-form-item-code">
-          <input placeholder="请输入验证码" :maxlength="6" oninput = "value=value.replace(/[^\d]/g,'')" v-model="formData.smsCode"/>
-          <button :disabled="countDownNum !== 60" class="note-sync-popup-form-item-code-num" @click="onCodeClick">{{countDownNum !== 60 ? countDownNum +'秒后获取' : '获取验证码'}}</button>
+    <h1 class="note-sync-popup-title">Easynote 登录</h1>
+    <div v-if="isLogin">
+      <div class="note-sync-popup-islogin">当前用户 {{isLogin}}</div>
+    </div>
+    <div v-if="!isLogin">
+      <div class="note-sync-popup-form">
+        <div class="note-sync-popup-form-item">
+          <input placeholder="请输入手机号" :maxlength="11" oninput = "value=value.replace(/[^\d]/g,'')" v-model="formData.phone"/>
+          <div class="note-sync-popup-validate-msg">{{validateMsg.phone}}</div>
         </div>
-        <div class="note-sync-popup-form-item-validate-msg">{{validateMsg.smsCode}}</div>
+        <div class="note-sync-popup-form-item">
+          <div class="note-sync-popup-form-item-code">
+            <input placeholder="请输入验证码" :maxlength="6" oninput = "value=value.replace(/[^\d]/g,'')" v-model="formData.smsCode"/>
+            <button :disabled="countDownNum !== 60" class="note-sync-popup-form-item-code-num" @click="onCodeClick">{{countDownNum !== 60 ? countDownNum +'秒后获取' : '获取验证码'}}</button>
+          </div>
+          <div class="note-sync-popup-validate-msg">{{validateMsg.smsCode}}</div>
+        </div>
+      </div>
+      <div class="note-sync-popup-validate-msg">{{validateMsg.loginMsg}}</div>
+      <div class="note-sync-popup-login" :disabled="isLoginLoading"  @click="onLogin">
+        <LoadingOutlined v-if="isLoginLoading" class="note-sync-popup-login-loading"/>
+        登录
       </div>
     </div>
-    <div class="note-sync-popup-login" :disabled="isLoginLoading"  @click="onLogin">
-      <LoadingOutlined v-if="isLoginLoading" class="note-sync-popup-login-loading"/>
-      登录</div>
   </main>
 </template>
 
 <script setup lang="ts">
 import {ref, watch} from 'vue'
 import { LoadingOutlined } from '@ant-design/icons-vue'
+import { sendMessage } from 'webext-bridge';
+import { IS_USER_LOGIN, SEND_SMS_CODE, USER_LOGIN } from '../constant';
 
 const formData = ref({
   phone: '15888444934',
@@ -30,19 +39,29 @@ const formData = ref({
 })
 const validateMsg = ref({
   phone: '',
-  smsCode: ''
+  smsCode: '',
+  loginMsg: '',
 })
+const isLogin = ref('')
 const countDownNum = ref(60)
 const isLoginLoading = ref(false)
 
 let countDownNumInterval: any = null
 
 watch(() => formData.value.phone, () => {
+  validateMsg.value.loginMsg = ''
   validateMsg.value.phone = ''
 })
 
 watch(() => formData.value.smsCode, () => {
+  validateMsg.value.loginMsg = ''
   validateMsg.value.smsCode = ''
+})
+
+sendMessage(IS_USER_LOGIN, {}).then((res: any) => {
+  if(res.token) {
+    isLogin.value = res.phone.slice(-4)
+  }
 })
 
 const validate = (key?: string) => {
@@ -81,28 +100,38 @@ const countDown = () => {
   }, 1000)
 }
 
-const onCodeClick = () => {
+const onCodeClick = async () => {
   if (countDownNum.value !== 60) {
     return
   }
   if (!validate('CODE')) {
     return
   }
-  // ....
-  countDown()
+  const res = await sendMessage(SEND_SMS_CODE, {phone: formData.value.phone})
+  if (res) {
+    countDown()
+  }
 }
 
-const onLogin = () => {
+const onLogin = async () => {
   if (!validate()) {
     return
   }
   isLoginLoading.value = true
+  const res: any = await sendMessage(USER_LOGIN, {...formData.value})
+  if (res && res.token) {
+    isLogin.value = res.phone.slice(-4)
+  } else {
+    validateMsg.value.loginMsg = '登录失败，验证码错误'
+  }
+  isLoginLoading.value = false
 }
 </script>
 
 <style lang="less">
 .note-sync-popup {
   width: 300px;
+  height: 300px;
   padding: 0 40px 40px;
   font-size: 14px;
   &-title {
@@ -110,6 +139,15 @@ const onLogin = () => {
     font-size: 20px;
     text-align: center;
   }
+  &-islogin {
+    margin-top: 40px;
+    text-align: center;
+  }
+  &-validate-msg {
+      height: 25px;
+      padding: 0 4px;
+      color: red;
+    }
   &-form {
     input {
       width: 100%;
@@ -118,11 +156,6 @@ const onLogin = () => {
       border-radius: 3px;
       padding: 4px;
       outline-style: none;
-    }
-    &-item-validate-msg {
-      height: 25px;
-      padding: 0 4px;
-      color: red;
     }
     &-item-code {
       display: flex;

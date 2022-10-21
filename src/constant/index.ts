@@ -24,3 +24,9 @@ export const GET_ITEM_NOTE_DATA = 'GET_ITEM_NOTE_DATA';
 export const DEL_ITEM_NOTE_DATA = 'DEL_ITEM_NOTE_DATA';
 
 export const LIST_NOTE_DATA = 'LIST_NOTE_DATA';
+
+export const SEND_SMS_CODE = 'SEND_SMS_CODE';
+
+export const IS_USER_LOGIN = 'IS_USER_LOGIN';
+
+export const USER_LOGIN = 'USER_LOGIN';

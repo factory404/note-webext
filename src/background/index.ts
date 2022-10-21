@@ -3,6 +3,7 @@ import browser from 'webextension-polyfill'
 import { onMessage, sendMessage } from 'webext-bridge'
 import './storage-message';
 import './note-panel';
+import './popup';
 
 browser.runtime.onInstalled.addListener((): void => {
   // eslint-disable-next-line no-console
