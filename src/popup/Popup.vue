@@ -3,6 +3,7 @@
     <h1 class="note-sync-popup-title">Easynote 登录</h1>
     <div v-if="isLogin">
       <div class="note-sync-popup-islogin">当前用户 {{isLogin}}</div>
+      <div class="note-sync-popup-loginout" @click="loginout">退出登录 <RightOutlined /></div>
     </div>
     <div v-if="!isLogin">
       <div class="note-sync-popup-form">
@@ -29,12 +30,12 @@
 
 <script setup lang="ts">
 import {ref, watch} from 'vue'
-import { LoadingOutlined } from '@ant-design/icons-vue'
+import { LoadingOutlined, RightOutlined } from '@ant-design/icons-vue'
 import { sendMessage } from 'webext-bridge';
-import { IS_USER_LOGIN, SEND_SMS_CODE, USER_LOGIN } from '../constant';
+import { IS_USER_LOGIN, SEND_SMS_CODE, USER_LOGIN, USER_LOGIN_OUT } from '../constant';
 
 const formData = ref({
-  phone: '15888444934',
+  phone: '',
   smsCode: ''
 })
 const validateMsg = ref({
@@ -126,6 +127,12 @@ const onLogin = async () => {
   }
   isLoginLoading.value = false
 }
+
+const loginout = () => {
+    sendMessage(USER_LOGIN_OUT, {}).then(() => {
+      isLogin.value = ''
+    })
+}
 </script>
 
 <style lang="less">
@@ -142,6 +149,12 @@ const onLogin = async () => {
   &-islogin {
     margin-top: 40px;
     text-align: center;
+  }
+  &-loginout {
+    margin-top: 40px;
+    text-align: center;
+    color: #1890ff;
+    cursor: pointer;
   }
   &-validate-msg {
       height: 25px;

@@ -16,6 +16,8 @@ if (__DEV__) {
     import('./contentScriptHMR');
 }
 
+console.log('==browser.tabs=xxx=', browser.tabs);
+
 // communication example: send previous tab title from background page
 // see shim.d.ts for type declaration
 browser.tabs.onActivated.addListener(async({ tabId }) => {

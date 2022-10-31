@@ -7,12 +7,12 @@ import {
     LIST_NOTE_DATA,
     GET_ITEM_NOTE_DATA,
     DEL_ITEM_NOTE_DATA,
+    // LOGIN_TOKEN,
 } from '../constant';
 import { dateFormat } from '~/utils';
-import { getStorage, setStorage } from './storage';
+import { getStorage, setStorage } from './db/db-constant';
 
 const uniqueid = 'OVlVP3byp0Gv1Q';
-const userid = '3385112ed5';
 
 const LAST_NOTE_ITEM_ID_KEY = 'LAST_NOTE_ITEM_ID_KEY';
 
@@ -20,7 +20,6 @@ onMessage(CREATE_NEW_NOTE, async () => {
     try {
         const res = await requiress.post('/api/v1/note/create', {
             uniqueid,
-            userid,
             title: `笔记 ${dateFormat()}`,
         });
         return res;
@@ -31,7 +30,7 @@ onMessage(CREATE_NEW_NOTE, async () => {
 
 onMessage(LATELY_NOTE_DATA, async () => {
     try {
-        const objectId: any = await getStorage(LAST_NOTE_ITEM_ID_KEY);
+        const { objectId }: any = await getStorage(LAST_NOTE_ITEM_ID_KEY);
         const res = await requiress.get(`/api/v1/note/lately?uniqueid=${uniqueid}&objectId=${objectId || 'null'}`);
         return res;
     } catch (error) {
@@ -53,7 +52,7 @@ onMessage(GET_ITEM_NOTE_DATA, async (message: { data: any }) => {
     const { objectId } = message.data;
     try {
         const res = await requiress.get(`/api/v1/note/item?objectId=${objectId}`);
-        await setStorage(LAST_NOTE_ITEM_ID_KEY, objectId);
+        await setStorage(LAST_NOTE_ITEM_ID_KEY, { objectId });
         return res;
     } catch (error) {
         console.log(error);

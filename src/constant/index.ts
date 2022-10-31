@@ -30,3 +30,7 @@ export const SEND_SMS_CODE = 'SEND_SMS_CODE';
 export const IS_USER_LOGIN = 'IS_USER_LOGIN';
 
 export const USER_LOGIN = 'USER_LOGIN';
+
+export const USER_LOGIN_OUT = 'USER_LOGIN_OUT';
+
+export const LOGIN_TOKEN = 'LOGIN_TOKEN';
