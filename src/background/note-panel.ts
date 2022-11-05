@@ -12,14 +12,20 @@ import {
 import { dateFormat } from '~/utils';
 import { getStorage, setStorage } from './db/db-constant';
 
-const uniqueid = 'OVlVP3byp0Gv1Q';
+// const uniqueid = 'OVlVP3byp0Gv1Q';
 
 const LAST_NOTE_ITEM_ID_KEY = 'LAST_NOTE_ITEM_ID_KEY';
 
 onMessage(CREATE_NEW_NOTE, async () => {
     try {
+        // 2. 能否 service worker 通知到所有 tabs  ?  进行登录登出通知
+
+        // const token: any = await getStorage(LOGIN_TOKEN);
+        // if (token && token.uniqueid) {
+        //     throw new Error('uniqueid is null');
+        // }
+
         const res = await requiress.post('/api/v1/note/create', {
-            uniqueid,
             title: `笔记 ${dateFormat()}`,
         });
         return res;
@@ -31,7 +37,7 @@ onMessage(CREATE_NEW_NOTE, async () => {
 onMessage(LATELY_NOTE_DATA, async () => {
     try {
         const { objectId }: any = await getStorage(LAST_NOTE_ITEM_ID_KEY);
-        const res = await requiress.get(`/api/v1/note/lately?uniqueid=${uniqueid}&objectId=${objectId || 'null'}`);
+        const res = await requiress.get(`/api/v1/note/lately?objectId=${objectId || 'null'}`);
         return res;
     } catch (error) {
         console.log(error);
@@ -41,7 +47,7 @@ onMessage(LATELY_NOTE_DATA, async () => {
 onMessage(LIST_NOTE_DATA, async (message: { data: any }) => {
     const { page, size } = message.data;
     try {
-        const res = await requiress.get(`/api/v1/note/items?uniqueid=${uniqueid}&page=${page}&size=${size}`);
+        const res = await requiress.get(`/api/v1/note/items?page=${page}&size=${size}`);
         return res;
     } catch (error) {
         console.log(error);

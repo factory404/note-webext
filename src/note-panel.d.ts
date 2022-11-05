@@ -3,6 +3,7 @@ interface INotePanelData {
     title: string;
     markdown: string;
     createdAt: string;
+    updatedAt: string;
 }
 
 interface INoteList {

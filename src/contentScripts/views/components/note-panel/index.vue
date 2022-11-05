@@ -6,7 +6,8 @@
                 <div>
                     <MenuUnfoldOutlined @click="() => isNoteListVisible = true"/>
                 </div>
-                <div>
+                <div class="nse-note-panel-header-right">
+                    <IconCloud :uploadDate="uploadDate"/>
                     <Tooltip>
                         <template #title>
                             新建笔记
@@ -47,7 +48,8 @@ import Markdown from 'vue3-markdown-it';
 import Tooltip from '~/components/Tooltip.vue'
 import {GET_PANEL_WIDTH, SET_PANEL_WIDTH, SYNC_NOTE_DATA, CREATE_NEW_NOTE, LATELY_NOTE_DATA, GET_ITEM_NOTE_DATA} from '~/constant'
 import useStopDomEvent from '~/hook/useStopDomEvent';
-import DragButton from './drag-button.vue'
+import DragButton from '../modules/drag-button.vue'
+import IconCloud from '../modules/icon-cloud.vue'
 import NoteList from './note-list.vue'
 
 const TabPane = Tabs.TabPane
@@ -66,16 +68,21 @@ const TAB_KEY_EDITOR = '2'
 
 const activeTab = ref('1')
 
+const uploadDate = ref('')
+
 const noteData = ref<INotePanelData>({
     objectId: '',
     title: "",
     markdown: '',
-    createdAt: ''
+    createdAt: '',
+    updatedAt: '',
 })
 
+// 获取最新一条数据
 sendMessage(LATELY_NOTE_DATA, {}).then((data:any) => {
     if (data) {
         noteData.value = (data as INotePanelData)
+        uploadDate.value = (data as INotePanelData).updatedAt
     }
 })
 
@@ -88,8 +95,9 @@ sendMessage(GET_PANEL_WIDTH, {}).then((width:any) => {
 })
 
 watch(noteData, (val) => {
-    sendMessage(SYNC_NOTE_DATA, val).then(res => {
-        // 更新
+    // 更新数据
+    sendMessage(SYNC_NOTE_DATA, val).then((res: any) => {
+        uploadDate.value = res.updatedAt
     })
 }, {deep: true})
 
@@ -188,6 +196,16 @@ defineExpose({
         padding: 0 20px;
         border-bottom: 1px solid #e2e2e2;
         background: #ededed;
+
+        .anticon {
+            margin-left: 10px;
+            font-size: 18px;
+        }
+    }
+    &-header-right {
+        display: flex;
+        justify-items: center;
+        justify-content: flex-end;
     }
     &-content {
         &-title {
