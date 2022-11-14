@@ -1,72 +1,52 @@
 <template>
-    <div class="nse-drag-button" @mousedown="onMousedown" @mousemove="onMousemove">
-        <div class="nse-drag-button-box" :class="props.panelWidth === 0 ? 'nse-drag-button-box-close': ''">
+    <div class="nse-drag-button" ref="refDragbtn">
+        <div class="nse-drag-button-box" :class="props.panelWidth === 0 ? 'nse-drag-button-box-close': ''" @click="onOpenClick">
             <PauseOutlined/>
+        </div>
+        <div v-if="props.panelWidth > 0" :class="props.panelWidth > 0 ? 'nse-drag-button-box-active': ''" @click="onCloseClick">
+            <DoubleRightOutlined />
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import { PauseOutlined} from '@ant-design/icons-vue';
+import { ref, watch } from 'vue';
+import { PauseOutlined, DoubleRightOutlined} from '@ant-design/icons-vue';
+import { useDraggable } from '@vueuse/core'
 
 const props = defineProps({
     panelWidth: {
-        type: Number
+        type: Number,
+        default: 0
     }
 })
-const emit = defineEmits(['dragLeft', 'dragRight', 'btnclick'])
+const emit = defineEmits(['onDrag', 'btnclick'])
 
-const isDrag = ref(false)
+const refDragbtn = ref<HTMLElement | null>(null)
 
-const isMove = ref(false)
+const {x} = useDraggable(refDragbtn, {initialValue: {x:0, y: 0}})
 
-let pageX = 0
+const clientWidth = (document.querySelector('html') as any).clientWidth || 0
 
-const onMousedown = (event: any) => {
-    event.preventDefault();
-    event.stopPropagation();
-    isDrag.value = true
-    pageX = event.pageX
-
-}
-const onMousemove = (event: any) => {
-    event.preventDefault();
-    event.stopPropagation();    
-    if (!isDrag.value) {
-        return
-    }
-    isMove.value = true
-    if (event.pageX < pageX) {
-        emit('dragLeft', pageX-event.pageX)
-        
-    }
-    if (event.pageX > pageX) {
-        emit('dragRight', event.pageX - pageX)
-    }
-    pageX = event.pageX
-}
-
-const changeDragFlag = () => {
-    if (isDrag.value && !isMove.value) {
-        emit('btnclick')
-    }
-    isDrag.value = false
-    isMove.value = false
-}
-
-onMounted(() => {
-    document.addEventListener('mouseup', changeDragFlag, true)
+watch(x, () => {
+    let width =  clientWidth - x.value;
+    emit('onDrag', width)
+    
 })
-onUnmounted(() => {
-    document.removeEventListener('mouseup', changeDragFlag, true)
-})
+
+const onOpenClick = () => {
+    emit('btnclick', 'open')       
+}
+
+const onCloseClick = () => {
+    emit('btnclick', 'close')
+}
+
 </script>
 
 <style lang="less">
 .nse-drag-button{
     height: 40px;
-    padding: 0 20px;
     font-size: 12px;
     cursor: pointer;
 
@@ -85,6 +65,14 @@ onUnmounted(() => {
         color: #fff;
         background: #1890ff;
         box-shadow: -2px 0px 9px rgb(0 0 0 / 20%);
+    }
+
+    &-box-active {
+        background: rgb(227, 227, 227);
+        &:hover {
+            color: #fff;
+            background: #1890ff;
+        }
     }
 }
 </style>

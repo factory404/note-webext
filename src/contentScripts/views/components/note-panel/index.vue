@@ -1,6 +1,6 @@
 <template>
     <div class="nse-note-panel" :style="{width: panelWidth + 'px'}">
-        <DragButton class="nse-note-panel-drag-button" :panelWidth="panelWidth" @dragLeft="onDragLeft" @dragRight="onDragRight" @btnclick="onBtnclick"></DragButton>
+        <DragButton class="nse-note-panel-drag-button" :panelWidth="panelWidth" @onDrag="onDrag" @btnclick="onBtnclick"></DragButton>
         <div ref="refNotePanel">
             <div class="nse-note-panel-header">
                 <div>
@@ -55,9 +55,8 @@ import NoteList from './note-list.vue'
 const TabPane = Tabs.TabPane
 const TextArea = Input.TextArea
 
-
 const refNotePanel = ref(null);
-const panelWidth = ref(360);
+const panelWidth = ref(0);
 const isNoteListVisible = ref<boolean>(false)
 
 const MAX_PANEL_WIDTH = 500;
@@ -86,14 +85,6 @@ sendMessage(LATELY_NOTE_DATA, {}).then((data:any) => {
     }
 })
 
-sendMessage(GET_PANEL_WIDTH, {}).then((width:any) => {
-    if (width || width === 0) {
-        changeBodyWidth(width)
-    } else {
-        changeBodyWidth(panelWidth.value)
-    }
-})
-
 watch(noteData, (val) => {
     // 更新数据
     sendMessage(SYNC_NOTE_DATA, val).then((res: any) => {
@@ -105,25 +96,31 @@ useStopDomEvent(refNotePanel, 'mouseup');
 
 
 const changeBodyWidth = (width: number) => {
+    if (width > MAX_PANEL_WIDTH) {
+        width = MAX_PANEL_WIDTH
+    }
     document.body.setAttribute('style', `width: calc(100% - ${width}px);`);
     panelWidth.value = width
     sendMessage(SET_PANEL_WIDTH, {panelWidth: width})
 }
 
-const onDragLeft = (pixel: number) => {
-    if (panelWidth.value > MAX_PANEL_WIDTH) {
-        return
-    }
-    changeBodyWidth(panelWidth.value + pixel)
+const onDrag = (width: number) => {
+    changeBodyWidth(width)
 }
-const onDragRight = (pixel: number) => {
-    if (panelWidth.value < MIN_PANEL_WIDTH) {
-        return
+
+const onBtnclick = (flage: string) => {
+    if (flage === 'open') {
+        sendMessage(GET_PANEL_WIDTH, {}).then((width:any) => {
+            if (width > 50) {
+                changeBodyWidth(width)
+            } else {
+                changeBodyWidth(MIN_PANEL_WIDTH)
+            }
+        })
     }
-    changeBodyWidth(panelWidth.value - pixel)
-}
-const onBtnclick = () => {
-    changeBodyWidth(0)
+    if (flage === 'close') {
+        changeBodyWidth(0)
+    }
 }
 
 const onNoteItemClick = (item: INotePanelData) => {
@@ -183,7 +180,7 @@ defineExpose({
     &-drag-button{
         position: absolute;
         top: 0;
-        left: -26px;
+        left: -8px;
         bottom: 0;
         margin: auto 0;
         z-index: 999999;
