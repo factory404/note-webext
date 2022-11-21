@@ -20,10 +20,12 @@
         display: none;
         position: absolute;
         top: -2px;
-        left: -75px;
+        right: 30px;
         padding: 2px 6px;
+        color: #fff;
+        background: #333;
+        white-space:nowrap; 
         border-radius: 3px;
-        background: #fff;
         box-shadow: 0px 3px 6px 1px #f2f2f2;
         &::after {
             position: absolute;
@@ -35,7 +37,7 @@
             content: ' ';
             width: 8px;
             height: 8px;
-            background: #fff;
+            background: #333;
             transform: rotate(45deg);
         }
     }

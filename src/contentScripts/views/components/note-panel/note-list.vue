@@ -5,7 +5,10 @@
                 <MenuFoldOutlined @click="onClose"></MenuFoldOutlined>
             </div>
             <div class="nse-note-list-content-list-item">
-                <div v-for="(item, index) in noteList.data" :key="index" class="nse-note-list-content-item" @click="itemClick(item)">
+                <div v-for="(item, index) in noteList.data" :key="index" 
+                class="nse-note-list-content-item" 
+                :class="item.objectId === (props.currentNoteData && props.currentNoteData.objectId) ? 'nse-note-list-content-item-current' : ''"
+                @click="itemClick(item)">
                     <div>
                         <div class="nse-note-list-content-item-title">{{item.title}}</div>
                         <div class="nse-note-list-content-item-create-at">{{item.createdAt}}</div>
@@ -26,11 +29,11 @@ import { MenuFoldOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import { Pagination } from 'ant-design-vue'
 import { LIST_NOTE_DATA, DEL_ITEM_NOTE_DATA } from '~/constant';
 
-const props = defineProps({
-    isNoteListVisible: {
-        type: Boolean
-    }
-})
+const props = defineProps<{
+    currentNoteData: INotePanelData
+    isNoteListVisible?: boolean
+}>()
+
 const emit = defineEmits(['update:isNoteListVisible', 'itemClick'])
 
 const noteList = ref<INoteList>({
@@ -103,7 +106,8 @@ const itemDelClick = (item: INotePanelData) => {
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        padding: 10px;
+        font-size: 16px;
+        padding: 8px;
     }
     &-content-list-item {
         position: relative;
@@ -129,7 +133,7 @@ const itemDelClick = (item: INotePanelData) => {
         border-bottom: 1px solid #efefef;
         cursor: pointer;
         &:hover {
-            background: rgb(249, 249, 249);
+            background: rgb(242, 242, 242);
         }
         &:last-child{
             border-bottom: 1px solid transparent;
@@ -146,6 +150,9 @@ const itemDelClick = (item: INotePanelData) => {
             font-weight: 400;
             color: #9a9a9a;
         }
+    }
+    &-content-item-current {
+        background: rgb(242, 242, 242);
     }
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
     <Tooltip class="nse-icon-cloud" :class="isAction ? 'nse-icon-cloud-active' : ''">
         <template #title>
-            {{props.uploadDate}}
+            {{props.uploadDate}} 更新
         </template>
         <CloudUploadOutlined class=""/>
     </Tooltip>

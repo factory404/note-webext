@@ -34,7 +34,7 @@
                     <TextArea v-show="activeTab===TAB_KEY_EDITOR" class="nse-note-panel-content-editor-input" :autoSize="{ minRows: 34, maxRows: 34 }" type="textarea" v-model:value="noteData.markdown"></TextArea>
                 </div>
             </div>
-            <NoteList v-model:isNoteListVisible="isNoteListVisible" @item-click="onNoteItemClick"></NoteList>
+            <NoteList :currentNoteData="noteData" v-model:isNoteListVisible="isNoteListVisible" @item-click="onNoteItemClick"></NoteList>
         </div>
     </div>
 </template>
@@ -56,7 +56,7 @@ const TabPane = Tabs.TabPane
 const TextArea = Input.TextArea
 
 const refNotePanel = ref(null);
-const panelWidth = ref(0);
+const panelWidth = ref(400);
 const isNoteListVisible = ref<boolean>(false)
 
 const MAX_PANEL_WIDTH = 500;
@@ -93,7 +93,6 @@ watch(noteData, (val) => {
 }, {deep: true})
 
 useStopDomEvent(refNotePanel, 'mouseup');
-
 
 const changeBodyWidth = (width: number) => {
     if (width > MAX_PANEL_WIDTH) {
