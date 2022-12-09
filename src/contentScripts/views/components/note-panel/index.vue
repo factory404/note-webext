@@ -7,6 +7,7 @@
                     <MenuUnfoldOutlined @click="() => isNoteListVisible = true"/>
                 </div>
                 <div class="nse-note-panel-header-right">
+                    <TagsManage :parentRef="refNotePanel"></TagsManage>
                     <IconCloud :uploadDate="uploadDate"/>
                     <Tooltip>
                         <template #title>
@@ -51,12 +52,14 @@ import useStopDomEvent from '~/hook/useStopDomEvent';
 import DragButton from '../modules/drag-button.vue'
 import IconCloud from '../modules/icon-cloud.vue'
 import NoteList from './note-list.vue'
+import TagsManage from '../modules/tags-manage.vue'
 
 const TabPane = Tabs.TabPane
 const TextArea = Input.TextArea
 
 const refNotePanel = ref(null);
-const panelWidth = ref(400);
+const panelWidth = ref(0);
+// const panelWidth = ref(400);
 const isNoteListVisible = ref<boolean>(false)
 
 const MAX_PANEL_WIDTH = 500;

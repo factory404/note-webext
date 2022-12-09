@@ -4,6 +4,11 @@
             <div class="nse-note-list-content-title">
                 <MenuFoldOutlined @click="onClose"></MenuFoldOutlined>
             </div>
+            <Tabs class="nse-note-list-tabs" size="small" v-model:activeKey="activeTab">
+                <TabPane :key=TAB_KEY_NOTE_TYPE.LATELY tab="最近"/>
+                <TabPane :key=TAB_KEY_NOTE_TYPE.OFTEN tab="常用"/>
+                <TabPane :key=TAB_KEY_NOTE_TYPE.ALL tab="全部"/>
+            </Tabs>
             <div class="nse-note-list-content-list-item">
                 <div v-for="(item, index) in noteList.data" :key="index" 
                 class="nse-note-list-content-item" 
@@ -26,8 +31,10 @@
 <script setup lang="ts">
 import { sendMessage } from 'webext-bridge';
 import { MenuFoldOutlined, DeleteOutlined } from '@ant-design/icons-vue';
-import { Pagination } from 'ant-design-vue'
+import { Tabs, Pagination } from 'ant-design-vue'
 import { LIST_NOTE_DATA, DEL_ITEM_NOTE_DATA } from '~/constant';
+
+const TabPane = Tabs.TabPane
 
 const props = defineProps<{
     currentNoteData: INotePanelData
@@ -42,6 +49,14 @@ const noteList = ref<INoteList>({
     size: 0,
     data: []
 }) 
+
+const TAB_KEY_NOTE_TYPE = {
+    LATELY: 'LATELY',
+    OFTEN: 'OFTEN',
+    ALL: 'ALL'
+}
+
+const activeTab = ref(TAB_KEY_NOTE_TYPE.LATELY)
 
 const getNoteList = (data: {page: number, size: number}) => {
     sendMessage(LIST_NOTE_DATA, data).then((data:any) => {
@@ -86,6 +101,10 @@ const itemDelClick = (item: INotePanelData) => {
     background: rgba(0,0,0,0.4);
     &-active {
         width: 100%;
+    }
+
+    &-tabs {
+        padding: 10px 20px;
     }
 
     &-content {
