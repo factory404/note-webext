@@ -34,3 +34,10 @@ export const USER_LOGIN = 'USER_LOGIN';
 export const USER_LOGIN_OUT = 'USER_LOGIN_OUT';
 
 export const LOGIN_TOKEN = 'LOGIN_TOKEN';
+
+export const LIST_TAGS_DATA = 'LIST_TAGS_DATA';
+
+export const SET_TAG = 'SET_TAG';
+
+export const DEL_TAG = 'DEL_TAG';
+

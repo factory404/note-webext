@@ -4,6 +4,7 @@ import { onMessage, sendMessage } from 'webext-bridge'
 import './storage-message';
 import './note-panel';
 import './popup';
+import './tags';
 
 browser.runtime.onInstalled.addListener((): void => {
   // eslint-disable-next-line no-console
