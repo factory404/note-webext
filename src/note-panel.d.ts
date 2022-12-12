@@ -1,6 +1,7 @@
 interface INotePanelData {
     objectId: string;
     title: string;
+    tag: string;
     markdown: string;
     createdAt: string;
     updatedAt: string;

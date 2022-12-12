@@ -20,6 +20,8 @@
             <div class="nse-note-panel-content">
                 <div class="nse-note-panel-content-title">
                     <Input v-model:value="noteData.title"></Input>
+                    <ASelect v-model:value="noteData.tag" class="nse-note-panel-content-tag-select" placeholder="添加标签" :options="tagsOptions" :getPopupContainer="()=> refNotePanel" @dropdownVisibleChange="tagsDropdownVisibleChange">
+                    </ASelect>
                 </div>
                 <div class="nse-note-panel-content-tools-nav">
                     <Tabs class="nse-note-panel-content-tabs" size="small" v-model:activeKey="activeTab">
@@ -43,11 +45,11 @@
 <script setup lang="ts">
 import {watch} from 'vue'
 import { sendMessage } from 'webext-bridge';
-import {Tabs, Input} from 'ant-design-vue'
+import {Tabs, Input, Select as ASelect} from 'ant-design-vue'
 import { MenuUnfoldOutlined, PictureOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import Markdown from 'vue3-markdown-it';
 import Tooltip from '~/components/Tooltip.vue'
-import {GET_PANEL_WIDTH, SET_PANEL_WIDTH, SYNC_NOTE_DATA, CREATE_NEW_NOTE, LATELY_NOTE_DATA, GET_ITEM_NOTE_DATA} from '~/constant'
+import {GET_PANEL_WIDTH, SET_PANEL_WIDTH, SYNC_NOTE_DATA, CREATE_NEW_NOTE, LATELY_NOTE_DATA, GET_ITEM_NOTE_DATA, LIST_TAGS_DATA } from '~/constant'
 import useStopDomEvent from '~/hook/useStopDomEvent';
 import DragButton from '../modules/drag-button.vue'
 import IconCloud from '../modules/icon-cloud.vue'
@@ -57,7 +59,7 @@ import TagsManage from '../modules/tags-manage.vue'
 const TabPane = Tabs.TabPane
 const TextArea = Input.TextArea
 
-const refNotePanel = ref(null);
+const refNotePanel = ref(undefined);
 // const panelWidth = ref(0);
 const panelWidth = ref(400);
 const isNoteListVisible = ref<boolean>(false)
@@ -75,10 +77,17 @@ const uploadDate = ref('')
 const noteData = ref<INotePanelData>({
     objectId: '',
     title: "",
+    tag: "",
     markdown: '',
     createdAt: '',
     updatedAt: '',
 })
+
+const tagsOptions = ref([
+    {
+        value: '常用',
+    },
+])
 
 // 获取最新一条数据
 sendMessage(LATELY_NOTE_DATA, {}).then((data:any) => {
@@ -149,9 +158,21 @@ const createNewNoteClick = () => {
     })
 }
 
+const tagsDropdownVisibleChange = (visible: boolean) => {
+    if (!visible) {
+        return
+    }
+    sendMessage(LIST_TAGS_DATA, {page: 1, size: 100}).then((data:any) => {
+        if (data) {
+            tagsOptions.value = [{value: '常用'}, ...(data as ITagList).data]
+        }
+    })
+}
+
 defineExpose({
     updateNote
 })
+
 </script>
 
 <style lang="less">
@@ -216,6 +237,18 @@ defineExpose({
             font-size: 16px;
             font-weight: 600;
             border-bottom: 1px solid #e2e2e2;
+        }
+        &-tag-select{
+            width: 140px;
+            margin-right: -10px;
+            color: #1890ff;
+            border: none;
+            box-shadow: rgb(154 154 154) -10px 0px 10px -10px;
+
+            .note-sync-antdv-select-selector {
+                background: none !important;
+                border: none !important;
+            }
         }
         &-tools-nav {
             display: flex;

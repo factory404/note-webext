@@ -10,10 +10,10 @@
                         <Input size="small" style="width: 160px;height:24px;font-size: 16px;" v-model:value="valueTag"></Input>
                         <Button type="primary" size='small' @click="addTagClick">添加</Button>
                     </InputGroup>
-                    <div :style="styles.content">
-                        <div :style="styles.contentItem" v-for="(item) in tagList.data" :key="item.objectId">
+                    <div class="nse-tags-manage-content">
+                        <div class="nse-tags-manage-content-item" v-for="(item) in tagList.data" :key="item.objectId">
                             <span>{{item.value}}</span>
-                            <CloseOutlined :style="styles.closeIcon" @click="itemDelClick(item)"/>
+                            <CloseOutlined class="nse-tags-manage-content-close-icon" @click="itemDelClick(item)"/>
                         </div>
                     </div>
                 </Spin>
@@ -85,30 +85,28 @@ const itemDelClick = (item: ITag) => {
     })
 }
 
-
-const styles = {
-    content: `
-    height: 200px;
-    overflow: hidden;
-    margin-top: 10px;
-    overflow: auto;
-    `,
-    contentItem: `
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 2px;
-    padding: 4px;
-    font-size: 16px;
-    border: 1px solid rgb(236, 236, 236);
-    `,
-    closeIcon: `
-    margin-right: 10px;
-    cursor: pointer;
-    `
-}
 </script>
 
-<style>
-
+<style lang="less">
+.nse-tags-manage {
+    &-content {
+        height: 200px;
+        overflow: hidden;
+        margin-top: 10px;
+        overflow: auto;
+    }
+    &-content-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 2px;
+        padding: 2px;
+        font-size: 14px;
+        border: 1px solid rgb(236, 236, 236);
+    }
+    &-close-icon{
+        margin-right: 10px;
+        cursor: pointer;
+    }
+}
 </style>

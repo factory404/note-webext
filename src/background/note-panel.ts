@@ -94,6 +94,7 @@ onMessage(SYNC_NOTE_DATA, async (message: { data: any }) => {
                     objectId: note.objectId,
                     title: note.title,
                     markdown: note.markdown,
+                    tag: note.tag,
                 })
                 .then((res) => {
                     reslove(res);

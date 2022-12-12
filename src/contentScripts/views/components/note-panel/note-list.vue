@@ -1,6 +1,6 @@
 <template>
-    <div class="nse-note-list" :class="props.isNoteListVisible ? 'nse-note-list-active' : ''">
-        <div class="nse-note-list-content" :class="props.isNoteListVisible ? 'nse-note-list-content-active' : ''">
+    <div class="nse-note-list" :class="props.isNoteListVisible ? 'nse-note-list-active' : ''" @click="onClose">
+        <div class="nse-note-list-content" :class="props.isNoteListVisible ? 'nse-note-list-content-active' : ''" @click.stop="() => {}">
             <div class="nse-note-list-content-title">
                 <MenuFoldOutlined @click="onClose"></MenuFoldOutlined>
             </div>
@@ -14,11 +14,12 @@
                 class="nse-note-list-content-item" 
                 :class="item.objectId === (props.currentNoteData && props.currentNoteData.objectId) ? 'nse-note-list-content-item-current' : ''"
                 @click="itemClick(item)">
-                    <div>
+                    <div class="nse-note-list-content-item-wrap">
                         <div class="nse-note-list-content-item-title">{{item.title}}</div>
-                        <div class="nse-note-list-content-item-create-at">{{item.createdAt}}</div>
+                        <div class="nse-note-list-content-item-tag" v-show="item.tag">{{item.tag}}</div>
                     </div>
-                    <div>
+                    <div class="nse-note-list-content-item-wrap">
+                        <div class="nse-note-list-content-item-create-at">{{item.createdAt}}</div>
                         <DeleteOutlined class="nse-note-list-content-item-del-icon" @click.stop="itemDelClick(item)"/>
                     </div>
                 </div>
@@ -29,6 +30,7 @@
 </template>
 
 <script setup lang="ts">
+import {watch} from 'vue'
 import { sendMessage } from 'webext-bridge';
 import { MenuFoldOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import { Tabs, Pagination } from 'ant-design-vue'
@@ -42,6 +44,12 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['update:isNoteListVisible', 'itemClick'])
+
+watch(() => props.isNoteListVisible, (visible) => {
+    if (visible) {
+        getNoteList({page: 1, size: 10})
+    }
+})
 
 const noteList = ref<INoteList>({
     total: 0,
@@ -73,6 +81,8 @@ const onPaginationChange = (page: number) => {
 }
 
 const onClose = () => {
+    console.log('1111111');
+    
     emit('update:isNoteListVisible', false)
 }
 
@@ -145,9 +155,6 @@ const itemDelClick = (item: INotePanelData) => {
         }
     }
     &-content-item{
-        display: flex;
-        align-items:flex-start;
-        justify-content: space-between;
         padding: 10px;
         border-bottom: 1px solid #efefef;
         cursor: pointer;
@@ -157,17 +164,36 @@ const itemDelClick = (item: INotePanelData) => {
         &:last-child{
             border-bottom: 1px solid transparent;
         }
+        &-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
         &-title {
             font-size: 16px;
             font-weight: 500;
         }
+        &-tag {
+            font-size: 12px;
+            padding: 2px 4px;
+            border-radius: 2px 4px;
+            background: #e9e9e9;
+        }
         &-create-at {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
             font-size: 14px;
         }
         &-del-icon{
-            padding: 5px;
+            margin-top: 5px;
             font-weight: 400;
             color: #9a9a9a;
+
+            :hover {
+                color: #1890ff;
+            }
         }
     }
     &-content-item-current {
