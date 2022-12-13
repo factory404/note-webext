@@ -31,8 +31,8 @@ export const calcPosition = (e: MouseEvent) => {
     return {
         panelX: x + 'px',
         panelY: y + 'px',
-        buttonX: clientX + 'px',
-        buttonY: pageY + 15 + 'px',
+        buttonX: clientX + 38 + 'px',
+        buttonY: pageY + 9 + 'px',
         isTop,
         maxHeight: maxHeight + 'px',
     };

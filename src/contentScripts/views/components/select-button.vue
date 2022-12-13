@@ -32,6 +32,7 @@ const onSelect = () => {
 .nse-select-button{
     position: absolute;
     z-index: 999999;
+    cursor: pointer;
     &-img{
         width: 40px;
         height: 40px;

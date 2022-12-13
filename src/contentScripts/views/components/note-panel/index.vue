@@ -60,8 +60,8 @@ const TabPane = Tabs.TabPane
 const TextArea = Input.TextArea
 
 const refNotePanel = ref(undefined);
-// const panelWidth = ref(0);
-const panelWidth = ref(400);
+const panelWidth = ref(0);
+// const panelWidth = ref(400);
 const isNoteListVisible = ref<boolean>(false)
 
 const MAX_PANEL_WIDTH = 500;
